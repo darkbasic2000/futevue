@@ -1,0 +1,21 @@
+table .time {
+    width: 30%;
+}
+
+table .versus {
+    width: 10%;
+}
+
+table .gols {
+    width: 15%;
+}
+
+input[type=text] {
+    width: 30px;
+    text-align: center;
+}
+
+.rounded-circle {
+    min-height: 50px;
+    min-width: 50px;
+}
