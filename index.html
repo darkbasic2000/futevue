@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css" />
+    <title>FuteVue</title>
+</head>
+
+<body style="background-color: #f0f8ff;">
+
+    <div class="container w-75 mt-3 fs-5" id="app">
+
+        <h1 class="text-center">
+            <i class="fa-solid fa-futbol"></i>&nbsp;Fute<i class="fa-brands fa-vuejs text-success mb-3"></i>ue
+        </h1>
+
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" 
+                type="button" role="tab" aria-controls="home" aria-selected="true">
+                <i class="fa-solid fa-flag"></i> Jogos ({{ rodada }}ª rodada)
+            </button>
+            </li>
+            <li class="nav-item" role="presentation">
+            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" 
+                type="button" role="tab" aria-controls="profile" aria-selected="false">
+                <i class="fa-solid fa-trophy"></i> Classificação
+            </button>
+            </li>
+        </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center mt-3">
+                    <li class="page-item"><a class="page-link" href="#" @click="rodada > 1 ? rodada-- : ''"><i class="fa-solid fa-backward"></i> Anterior </a></li>
+                    <li class="page-item"><a class="page-link" href="#" @click="rodada < 38 ? rodada++ : ''">Próxima <i class="fa-solid fa-forward"></i></a></li>                            
+                </ul>
+            </nav>
+            <table class="table table-success table-striped">
+                <tr v-for="jogo in games" :key="jogo.id">              
+                    <td class="text-start ps-3 fw-bold time" v-if="jogo.rodada === rodada">{{ jogo.a }}</td>
+                    <td class="gols text-end" v-if="jogo.rodada === rodada" class="fs-5">
+                        <div v-show="!jogo.done"><input type="text" maxlength="2" @keyup.enter="simular($event, jogo.id, 'a', jogo.a)" /></div>
+                        <div v-show="jogo.done">{{ jogo.golsa }}</div>
+                    </td>
+                    <td class="versus text-center" v-if="jogo.rodada === rodada">X</td>
+                    <td class="gols text-start" v-if="jogo.rodada === rodada" class="fs-5">
+                        <div v-show="!jogo.done"><input type="text" maxlength="2" @keyup.enter="simular($event, jogo.id, 'b', jogo.b)" /></div>
+                        <div v-show="jogo.done">{{ jogo.golsb }}</div>
+                    </td>
+                    <td class="text-end pe-3 fw-bold time" v-if="jogo.rodada === rodada">{{ jogo.b }}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+            <table class="table mt-3">
+                <thead>
+                    <th></th>
+                    <th class="text-center">TIME</th>
+                    <th class="text-center">PONTOS</th>
+                    <th class="text-center">VITÓRIAS</th>
+                    <th>EMPATES</th>
+                    <th>DERROTAS</th>
+                    <th>GM</th>
+                    <th>GS</th>
+                    <th>SALDO</th>
+                </thead>
+                <tr v-for="time, index in times">
+                    <td :class="[(index >= 0 && index <= 3)? 'text-bg-success':'', (index >= 4 && index <= 5) ? 'text-bg-primary':'', (index >= 6 && index <= 11)? 'text-bg-info':'', (index >= 11 && index <= 15)? 'text-bg-secondary':'', (index >= 16)? 'text-bg-danger':'']">{{ index + 1 }}</td>
+                    <td>{{ time.nome }}</td>
+                    <td>{{ time.pontos }}</td>                           
+                    <td>{{ time.vitorias }}</td>
+                    <td>{{ time.empates }}</td>
+                    <td>{{ time.derrotas }}</td>
+                    <td>{{ time.gm }}</td>
+                    <td>{{ time.gs }}</td>
+                    <td>{{ time.saldo }}</td>
+                </tr>
+            </table>
+
+            <div class="mt-5 mb-5">
+                <span class="rounded-circle bg-success">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span>Libertadores</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="rounded-circle bg-primary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span>Pré-libertadores</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="rounded-circle bg-info">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span>Sulamericana</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="rounded-circle bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span>Permanência</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="rounded-circle bg-danger">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span>Rebaixamento</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+
+        </div>
+
+        
+
+    </div>       
+
+    <script>
+        const triggerTabList = document.querySelectorAll('#myTab button')
+        triggerTabList.forEach(triggerEl => {
+            const tabTrigger = new bootstrap.Tab(triggerEl)
+            triggerEl.addEventListener('click', event => {
+                event.preventDefault()
+                tabTrigger.show()
+            })
+        })
+    </script>
+    
+    <script src="teams.js"></script>
+    <script src="jogos.js"></script>
+    <script src="app.js"></script>
+    
+</body>
+
+</html>
